@@ -149,7 +149,6 @@ def initZMPRef(robot,appli):
   plug(appli.pg.zmpref,wa_zmp.sin2)
   # Connect the ZMPref to OpenHRP in the waist reference frame.
   appli.pg.parseCmd(':SetZMPFrame world')
-  plug(appli.pg.zmpref,robot.device.zmp)
 
   robot.addTrace(robot.device.name,'zmp')
   robot.addTrace(pg_H_wa.name,'sout')
@@ -201,16 +200,11 @@ def initWaistCoMTasks(robot, appli):
   waistReferenceVector.selec2(0,3)
   appli.pg.waistReference=PoseRollPitchYawToMatrixHomo('waistReference')
 
-  # Controlling also the yaw.
-  appli.waist.selec.value = '111100'
-
   robot.addTrace(appli.pg.waistReference.name,'sout')
   robot.addTrace(robot.geom.name,'position')
   robot.addTrace(appli.pg.name,'initwaistposref')
   plug(waistReferenceVector.sout, appli.pg.waistReference.sin)
   plug(appli.pg.waistReference.sout,appli.waist.reference)
-
-  appli.tasks ['waist'].controlGain.value = 200
 
 
 def initFeetTask(robot,appli):
@@ -280,15 +274,31 @@ def createGraph(robot,appli):
   initRobotGeom(robot)
   initZMPRef(robot,appli)
   initWaistCoMTasks(robot,appli)
-  initFeetTask(robot,appli)
-  initPostureTask(robot,appli)
-  pushTasks(robot,appli)
 
-def CreateEverythingForPG(robot,appli):
+def CreatePG(robot,appli):
   if hasattr(robot, 'urdfName'):
       CreateEverythingForPGwithUrdf(robot,appli)
   else:
       CreateEverythingForPGwithVRML(robot,appli)
+
+def ConnectStandalonePg(self, robot):
+  # Zmp
+  plug(self.pg.zmpref,robot.device.zmp)
+  # Waist
+  plug(self.pg.waistReference.sout,self.waist.reference)
+  self.tasks ['waist'].controlGain.value = 200
+  # Controlling also the yaw.
+  self.waist.selec.value = '111100'
+  # Feet
+  initFeetTask(robot,self)
+  # Posture 
+  initPostureTask(robot,self)
+  # Push tasks
+  pushTasks(robot,self)
+
+def CreateEverythingForPG(robot,appli):
+  CreatePG(robot,appli)
+  ConnectStandalonePg(appli, robot)
 
 def CreateEverythingForPGwithVRML(robot,appli):
   robot.initializeTracer()
