@@ -204,7 +204,6 @@ def initWaistCoMTasks(robot, appli):
   robot.addTrace(robot.geom.name,'position')
   robot.addTrace(appli.pg.name,'initwaistposref')
   plug(waistReferenceVector.sout, appli.pg.waistReference.sin)
-  plug(appli.pg.waistReference.sout,appli.waist.reference)
 
 
 def initFeetTask(robot,appli):
@@ -235,6 +234,7 @@ def initPostureTask(robot,appli):
   appli.features['featurePosition'] = FeaturePosture('featurePosition')
   plug(robot.device.state,appli.features['featurePosition'].state)
   robotDim = len(robot.dynamic.velocity.value)
+
   appli.features['featurePosition'].posture.value = robot.halfSitting
 
   # Remove the dofs of the feet.
@@ -275,29 +275,29 @@ def createGraph(robot,appli):
   initZMPRef(robot,appli)
   initWaistCoMTasks(robot,appli)
 
-def CreatePG(robot,appli):
+def CreatePG(appli, robot):
   if hasattr(robot, 'urdfName'):
       CreateEverythingForPGwithUrdf(robot,appli)
   else:
       CreateEverythingForPGwithVRML(robot,appli)
 
-def ConnectStandalonePg(self, robot):
+def ConnectStandalonePg(appli, robot):
   # Zmp
-  plug(self.pg.zmpref,robot.device.zmp)
+  plug(appli.pg.zmpref,robot.device.zmp)
   # Waist
-  plug(self.pg.waistReference.sout,self.waist.reference)
-  self.tasks ['waist'].controlGain.value = 200
+  plug(appli.pg.waistReference.sout,appli.waist.reference)
+  appli.tasks ['waist'].controlGain.value = 200
   # Controlling also the yaw.
-  self.waist.selec.value = '111100'
+  appli.waist.selec.value = '111100'
   # Feet
-  initFeetTask(robot,self)
+  initFeetTask(robot,appli)
   # Posture 
-  initPostureTask(robot,self)
+  initPostureTask(robot,appli)
   # Push tasks
-  pushTasks(robot,self)
+  pushTasks(robot,appli)
 
 def CreateEverythingForPG(robot,appli):
-  CreatePG(robot,appli)
+  CreatePG(appli, robot)
   ConnectStandalonePg(appli, robot)
 
 def CreateEverythingForPGwithVRML(robot,appli):

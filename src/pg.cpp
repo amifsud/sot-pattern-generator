@@ -41,7 +41,7 @@
 #include <sot/core/matrix-homogeneous.hh>
 
 #include <sot-pattern-generator/pg.h>
-#include <jrl/dynamics/urdf/parser.hh>
+//#include <jrl/dynamics/urdf/parser.hh>
 
 using namespace std;
 namespace dynamicgraph {
@@ -555,56 +555,56 @@ namespace dynamicgraph {
 
     bool PatternGenerator::buildModelUrdf( void )
     {
-      jrl::dynamics::urdf::Parser parser;
+    //   jrl::dynamics::urdf::Parser parser;
 
-      // Creating the humanoid robot.
-      dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
-      CjrlHumanoidDynamicRobot * aHDR = 0;
+    //   // Creating the humanoid robot.
+    //   dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
+    //   CjrlHumanoidDynamicRobot * aHDR = 0;
 
-      // Parsing the file.
-      string RobotFileName = m_urdfDirectory + m_urdfMainFile;
+    //   // Parsing the file.
+    //   string RobotFileName = m_urdfDirectory + m_urdfMainFile;
 
-      std::map<std::string, std::string>::const_iterator it = specialJoints_.begin();
-      for (;it!=specialJoints_.end();++it) {
-        parser.specifyREPName(it->first, it->second);
-      }
-      aHDR = parser.parse(RobotFileName);
-      bool ok=true;
+    //   std::map<std::string, std::string>::const_iterator it = specialJoints_.begin();
+    //   for (;it!=specialJoints_.end();++it) {
+    //     parser.specifyREPName(it->first, it->second);
+    //   }
+    //   aHDR = parser.parse(RobotFileName);
+    //   bool ok=true;
 
-      if (aHDR!=0)
-      	{
-      	  CjrlFoot * rightFoot = aHDR->rightFoot();
-      	  if (rightFoot!=0)
-      	    {
-      	      vector3d AnkleInFoot;
-      	      rightFoot->getAnklePositionInLocalFrame(AnkleInFoot);
-	            m_AnkleSoilDistance = fabs(AnkleInFoot[2]);
-	            aHDR->leftFoot()->setSoleSize(m_soleLength, m_soleWidth);
-	            aHDR->rightFoot()->setSoleSize(m_soleLength, m_soleWidth);
-      	    }
-      	  else ok=false;
-      	}
-      else ok=false;
-      if (!ok)
-      	{
-      	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
-      					       "Error while creating humanoid robot dynamical model.",
-      					       "(PG creation process for object %s).",
-      					       getName().c_str());
-      	}
-      try
-      	{
-      	  m_PGI = PatternGeneratorJRL::patternGeneratorInterfaceFactory(aHDR);
-      	}
-      catch (...)
-      	{
-      	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
-      					       "Error while allocating the Pattern Generator.",
-      					       "(PG creation process for object %s).",
-      					       getName().c_str());
-      	}
-      m_init = true;
-      return false;
+    //   if (aHDR!=0)
+    //   	{
+    //   	  CjrlFoot * rightFoot = aHDR->rightFoot();
+    //   	  if (rightFoot!=0)
+    //   	    {
+    //   	      vector3d AnkleInFoot;
+    //   	      rightFoot->getAnklePositionInLocalFrame(AnkleInFoot);
+    // 	            m_AnkleSoilDistance = fabs(AnkleInFoot[2]);
+    // 	            aHDR->leftFoot()->setSoleSize(m_soleLength, m_soleWidth);
+    // 	            aHDR->rightFoot()->setSoleSize(m_soleLength, m_soleWidth);
+    //   	    }
+    //   	  else ok=false;
+    //   	}
+    //   else ok=false;
+    //   if (!ok)
+    //   	{
+    //   	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
+    //   					       "Error while creating humanoid robot dynamical model.",
+    //   					       "(PG creation process for object %s).",
+    //   					       getName().c_str());
+    //   	}
+    //   try
+    //   	{
+    //   	  m_PGI = PatternGeneratorJRL::patternGeneratorInterfaceFactory(aHDR);
+    //   	}
+    //   catch (...)
+    //   	{
+    //   	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
+    //   					       "Error while allocating the Pattern Generator.",
+    //   					       "(PG creation process for object %s).",
+    //   					       getName().c_str());
+    //   	}
+    //   m_init = true;
+       return false;
     }
 
     PatternGenerator::
